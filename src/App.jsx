@@ -14,16 +14,29 @@ function App() {
 
   // 2. Logic (Model Methods and controllers)
 
-  // Total bill including tip
-  const totalWithTip = bill + bill * (tipPercentage / 100);
-
   // Add a friend (Think about it as Friend.create)
   const addFriend = (name) => {
-    const newFriend = { id: Date.now(), name: name };
+    const newFriend = { id: Date.now(), name: name, expense: 0 };
     setFriends([...friends, newFriend]); // IMPORTANT: In react, always create a new array/object to trigger re-render
   };
+
+  // Update a friend's expense (Think about it as Friend.update)
+  const handleExpenseChange = (id, value) => {
+    // Map through friends and update the one with matching id
+    const updatedFriends = friends.map((friend) => {
+      if (friend.id === id) {
+        return { ...friend, expense: Number(value) };
+      }
+      return friend;
+    });
+
+    setFriends(updatedFriends);
+  };
   // Calculate each friend's share
-  const splitAmount = friends.length > 0 ? totalWithTip / friends.length : 0;
+  const tipMultiplier = 1 + tipPercentage / 100;
+  const sharedBillWithTip = bill * tipMultiplier;
+  const splitBaseAmount =
+    friends.length > 0 ? sharedBillWithTip / friends.length : 0;
 
   return (
     <div className="container">
@@ -48,8 +61,7 @@ function App() {
       </div>
 
       {/* Section 2: Real time summary */}
-      <h3>Total with Tip: ${totalWithTip.toFixed(2)}</h3>
-      <h3>Each friend pays: ${splitAmount.toFixed(2)}</h3>
+      <h3>Base with Tip: ${sharedBillWithTip.toFixed(2)}</h3>
 
       {/* Section 3: Add friends */}
       <form
@@ -66,7 +78,11 @@ function App() {
         <button type="submit">Add Friend</button>
       </form>
       {/* Section 4: Friend List Component - it was replaced for a component */}
-      <FriendList friends={friends} splitAmount={splitAmount} />
+      <FriendList
+        friends={friends}
+        splitBaseAmount={splitBaseAmount}
+        onUpdateExpense={handleExpenseChange}
+      />
     </div>
   );
 }
