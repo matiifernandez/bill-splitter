@@ -33,10 +33,14 @@ function App() {
     setFriends(updatedFriends);
   };
   // Calculate each friend's share
-  const tipMultiplier = 1 + tipPercentage / 100;
-  const sharedBillWithTip = bill * tipMultiplier;
+  const totalWithTip = bill + (bill * tipPercentage) / 100;
+  const totalIndividualExpenses = friends.reduce((acc, friend) => {
+    return acc + friend.expense;
+  }, 0);
+
+  const remainingToSplit = totalWithTip - totalIndividualExpenses;
   const splitBaseAmount =
-    friends.length > 0 ? sharedBillWithTip / friends.length : 0;
+    friends.length > 0 ? remainingToSplit / friends.length : 0;
 
   return (
     <div className="container">
@@ -61,7 +65,16 @@ function App() {
       </div>
 
       {/* Section 2: Real time summary */}
-      <h3>Base with Tip: ${sharedBillWithTip.toFixed(2)}</h3>
+      <h3>Total with Tip: ${totalWithTip.toFixed(2)}</h3>
+      <p style={{ fontSize: "0.9rem", color: "#666" }}>
+        (Extra expense: ${totalIndividualExpenses} | $
+        {remainingToSplit.toFixed(2)} to split)
+      </p>
+      {remainingToSplit < 0 && (
+        <p style={{ color: "red" }}>
+          ⚠️ Warning: Extra expenses exceed total bill with tip!
+        </p>
+      )}
 
       {/* Section 3: Add friends */}
       <form
