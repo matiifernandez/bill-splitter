@@ -29,9 +29,16 @@ function App() {
       }
       return friend;
     });
-
     setFriends(updatedFriends);
   };
+
+  // Delete a friend (Think about it as Friend.delete)
+  const deleteFriend = (id) => {
+    // Filter out the friend with the matching id
+    const updatedFriends = friends.filter((friends) => friends.id !== id);
+    setFriends(updatedFriends);
+  };
+
   // Calculate each friend's share
   const totalWithTip = bill + (bill * tipPercentage) / 100;
   const totalIndividualExpenses = friends.reduce((acc, friend) => {
@@ -95,6 +102,7 @@ function App() {
         friends={friends}
         splitBaseAmount={splitBaseAmount}
         onUpdateExpense={handleExpenseChange}
+        onDeleteFriend={deleteFriend}
       />
     </div>
   );

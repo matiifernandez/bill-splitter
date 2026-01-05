@@ -1,7 +1,12 @@
 // src/components/FriendList.jsx
 
 // We receive 'onUpdateExpense' y 'splitBaseAmount'
-function FriendList({ friends, splitBaseAmount, onUpdateExpense }) {
+function FriendList({
+  friends,
+  splitBaseAmount,
+  onUpdateExpense,
+  onDeleteFriend,
+}) {
   if (friends.length === 0) {
     return <p style={{ color: "#888" }}>No friends yet...</p>;
   }
@@ -46,8 +51,27 @@ function FriendList({ friends, splitBaseAmount, onUpdateExpense }) {
               </div>
             </div>
 
-            <div style={{ fontWeight: "bold", color: "#2ecc71" }}>
-              ${totalForFriend.toFixed(2)}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ fontWeight: "bold", color: "#2ecc71" }}>
+                ${totalForFriend.toFixed(2)}
+              </div>
+              {/* DELETE BUTTON */}
+              <button
+                onClick={() => onDeleteFriend(friend.id)}
+                style={{
+                  background: "#ff4444",
+                  color: "white",
+                  border: "none",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "0.8rem",
+                  marginLeft: "10px",
+                }}
+                aria-label="Delete Friend"
+              >
+                ✕
+              </button>
             </div>
           </li>
         );
