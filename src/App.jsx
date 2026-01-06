@@ -1,6 +1,6 @@
 // It's not longer required to import React in scope for JSX files in React 17+
-// But we'll import useState for state management.
-import { useState } from "react";
+// But we'll import useState for state management and useEffect for local storage.
+import { useState, useEffect } from "react";
 // Let's imagine this as our temporal schema.
 import "./App.css";
 // Import my new Friend List component
@@ -8,9 +8,34 @@ import FriendList from "./components/FriendList.jsx";
 
 function App() {
   // 1. State (instance variables @bill, @tip, @friends)
-  const [bill, setBill] = useState(0);
-  const [tipPercentage, setTipPercentage] = useState(0);
-  const [friends, setFriends] = useState([]);
+  const [bill, setBill] = useState(() => {
+    const savedBill = localStorage.getItem("bill");
+    // convert to number or default to 0 to avoid errors.
+    return savedBill ? Number(savedBill) : 0;
+  });
+  const [tipPercentage, setTipPercentage] = useState(() => {
+    const savedTip = localStorage.getItem("tipPercentage");
+    return savedTip ? Number(savedTip) : 0;
+  });
+  const [friends, setFriends] = useState(() => {
+    const savedFriends = localStorage.getItem("friends");
+    if (savedFriends) {
+      return JSON.parse(savedFriends);
+    } else {
+      return [];
+    }
+  });
+
+  // Sync friends to local storage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("friends", JSON.stringify(friends));
+  }, [friends]);
+
+  // Sync bill and tips to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem("bill", bill);
+    localStorage.setItem("tipPercentage", tipPercentage);
+  }, [bill, tipPercentage]); // to execute when bill or tipPercentage changes
 
   // 2. Logic (Model Methods and controllers)
 
