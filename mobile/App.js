@@ -103,6 +103,8 @@ export default function App() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
       >
         <Text style={styles.title}>💰 Bill Splitter</Text>
 
