@@ -8,6 +8,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage"; // Tu nueva DB
 import FriendList from "./components/FriendList";
@@ -98,79 +100,84 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>💰 Bill Splitter</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <Text style={styles.title}>💰 Bill Splitter</Text>
 
-      <ScrollView style={styles.scrollView}>
-        {/* Bill Card */}
-        <View style={styles.card}>
-          <Text style={styles.label}>Total Bill ($)</Text>
-          <TextInput
-            style={styles.inputLarge}
-            keyboardType="numeric"
-            value={bill}
-            onChangeText={setBill} // RN passes the text directly
-            placeholder="0.00"
-          />
+        <ScrollView style={styles.scrollView}>
+          {/* Bill Card */}
+          <View style={styles.card}>
+            <Text style={styles.label}>Total Bill ($)</Text>
+            <TextInput
+              style={styles.inputLarge}
+              keyboardType="numeric"
+              value={bill}
+              onChangeText={setBill} // RN passes the text directly
+              placeholder="0.00"
+            />
 
-          <Text style={styles.label}>Tip: {tipPercentage}%</Text>
-          {/* Using simple buttons for tip for now */}
-          <View style={styles.tipButtons}>
-            {[0, 10, 15, 20].map((tip) => (
-              <TouchableOpacity
-                key={tip}
-                onPress={() => setTipPercentage(tip)}
-                style={[
-                  styles.tipBtn,
-                  tipPercentage === tip && styles.tipBtnActive,
-                ]}
-              >
-                <Text
+            <Text style={styles.label}>Tip: {tipPercentage}%</Text>
+            {/* Using simple buttons for tip for now */}
+            <View style={styles.tipButtons}>
+              {[0, 10, 15, 20].map((tip) => (
+                <TouchableOpacity
+                  key={tip}
+                  onPress={() => setTipPercentage(tip)}
                   style={[
-                    styles.tipText,
-                    tipPercentage === tip && styles.tipTextActive,
+                    styles.tipBtn,
+                    tipPercentage === tip && styles.tipBtnActive,
                   ]}
                 >
-                  {tip}%
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.tipText,
+                      tipPercentage === tip && styles.tipTextActive,
+                    ]}
+                  >
+                    {tip}%
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
 
-        {/* Summary */}
-        <View style={styles.summary}>
-          <Text style={styles.summaryText}>
-            Total: ${totalWithTip.toFixed(2)}
-          </Text>
-          <Text style={styles.summarySubtext}>
-            Remaining to split: ${remainingToSplit.toFixed(2)}
-          </Text>
-        </View>
+          {/* Summary */}
+          <View style={styles.summary}>
+            <Text style={styles.summaryText}>
+              Total: ${totalWithTip.toFixed(2)}
+            </Text>
+            <Text style={styles.summarySubtext}>
+              Remaining to split: ${remainingToSplit.toFixed(2)}
+            </Text>
+          </View>
 
-        {/* Add Friend */}
-        <View style={styles.addFriendContainer}>
-          <TextInput
-            style={styles.inputName}
-            placeholder="Friend's name..."
-            value={newFriendName}
-            onChangeText={setNewFriendName}
+          {/* Add Friend */}
+          <View style={styles.addFriendContainer}>
+            <TextInput
+              style={styles.inputName}
+              placeholder="Friend's name..."
+              value={newFriendName}
+              onChangeText={setNewFriendName}
+            />
+            <TouchableOpacity onPress={addFriend} style={styles.addBtn}>
+              <Text style={styles.addBtnText}>Add</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Friend List Component */}
+          <FriendList
+            friends={friends}
+            splitBaseAmount={splitBaseAmount}
+            onUpdateExpense={handleExpenseChange}
+            onDeleteFriend={deleteFriend}
           />
-          <TouchableOpacity onPress={addFriend} style={styles.addBtn}>
-            <Text style={styles.addBtnText}>Add</Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* Friend List Component */}
-        <FriendList
-          friends={friends}
-          splitBaseAmount={splitBaseAmount}
-          onUpdateExpense={handleExpenseChange}
-          onDeleteFriend={deleteFriend}
-        />
-
-        {/* Extra space at the bottom for scroll */}
-        <View style={{ height: 50 }} />
-      </ScrollView>
+          {/* Extra space at the bottom for scroll */}
+          <View style={{ height: 50 }} />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
